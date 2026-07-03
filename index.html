@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather Dashboard | Task 6 - API Integration</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="bg-decor" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <div class="app">
+
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h.79a4.5 4.5 0 1 1 0 9Z"/>
+          </svg>
+        </span>
+        <span class="brand-name">Weatherly</span>
+      </div>
+      <p class="brand-tagline">Live conditions for any city or village, worldwide</p>
+    </header>
+
+    <!-- Search bar sits above the dashboard card -->
+    <div class="search-wrap">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          type="text"
+          id="city-input"
+          placeholder="Search any city or village..."
+          autocomplete="off"
+          aria-label="Search for a city or village"
+  role="combobox"
+  aria-expanded="false"
+  aria-controls="suggestions"
+        />
+        <button id="use-location" class="location-btn" title="Use my location" aria-label="Use my current location" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="6"/>
+          </svg>
+        </button>
+      </div>
+      <ul id="suggestions" class="suggestions hidden"></ul>
+    </div>
+
+    <!-- Loading state -->
+    <div id="loading" class="state-box loading hidden">
+      <div class="spinner"></div>
+      <p>Fetching weather&hellip;</p>
+    </div>
+
+    <!-- Error state -->
+    <div id="error" class="state-box error hidden">
+      <p id="error-message">Something went wrong.</p>
+    </div>
+
+    <!-- Empty / initial state -->
+    <div id="empty" class="state-box empty">
+      <div class="empty-illustration">
+        <svg viewBox="0 0 120 90" class="empty-svg">
+          <circle cx="80" cy="26" r="17" fill="#fbbf24" opacity="0.9"/>
+          <g stroke="#fbbf24" stroke-width="3" stroke-linecap="round" opacity="0.6">
+            <line x1="80" y1="2" x2="80" y2="8"/>
+            <line x1="80" y1="44" x2="80" y2="50" opacity="0"/>
+            <line x1="56" y1="26" x2="62" y2="26"/>
+            <line x1="63.5" y1="9.5" x2="67.5" y2="13.5"/>
+            <line x1="96.5" y1="9.5" x2="92.5" y2="13.5"/>
+          </g>
+          <path d="M30 68c-9 0-16-7-16-15.5S21 37 30 37c1.2 0 2.3.1 3.4.3C36.7 29.4 44.6 24 54 24c12.2 0 22.3 9 23.8 20.7 8.4 1.2 14.9 8.4 14.9 17.1 0 9.5-7.8 17.2-17.4 17.2H30Z" fill="#e9f1fd" stroke="#c7d7f0" stroke-width="2"/>
+        </svg>
+      </div>
+      <p class="empty-title">No location selected yet</p>
+      <p class="empty-sub">Search for a city or village to see the current weather</p>
+    </div>
+
+    <!-- Main dashboard -->
+    <section id="dashboard" class="dashboard hidden">
+
+      <!-- Left panel: current conditions -->
+      <aside class="panel-left">
+        <div class="panel-top">
+          <div class="location-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="pin-icon">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span id="city-name">--</span>
+          </div>
+          <p id="date-label" class="date-label">--</p>
+
+          <div class="sun-times">
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M4.93 10.93 7.76 8.1M2 18h2M20 18h2M16.24 8.1l2.83 2.83M6 18a6 6 0 1 1 12 0"/></svg> <span id="sunrise">--:--</span></span>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22v-4M4.93 13.07 7.76 15.9M2 5h2M20 5h2M16.24 15.9l2.83-2.83M6 5a6 6 0 1 1 12 0"/></svg> <span id="sunset">--:--</span></span>
+          </div>
+        </div>
+
+        <div class="temp-block">
+          <div class="temp-main">
+            <span id="temperature">--</span><span class="deg">&deg;</span>
+          </div>
+          <div class="condition-row">
+            <span id="weather-icon" class="weather-icon"></span>
+            <span id="condition">--</span>
+          </div>
+          <div id="condition-tags" class="condition-tags"></div>
+        </div>
+
+        <div class="skyline" aria-hidden="true">
+          <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax meet">
+            <circle cx="140" cy="120" r="55" fill="rgba(255,255,255,0.15)"/>
+            <rect x="20" y="70" width="34" height="130" fill="rgba(255,255,255,0.12)"/>
+            <rect x="60" y="40" width="26" height="160" fill="rgba(255,255,255,0.18)"/>
+            <polygon points="73,10 66,40 80,40" fill="rgba(255,255,255,0.18)"/>
+            <rect x="92" y="90" width="40" height="110" fill="rgba(255,255,255,0.14)"/>
+            <rect x="140" y="60" width="30" height="140" fill="rgba(255,255,255,0.2)"/>
+            <rect x="176" y="100" width="46" height="100" fill="rgba(255,255,255,0.12)"/>
+            <rect x="228" y="75" width="28" height="125" fill="rgba(255,255,255,0.16)"/>
+            <rect x="262" y="115" width="50" height="85" fill="rgba(255,255,255,0.12)"/>
+            <rect x="318" y="85" width="30" height="115" fill="rgba(255,255,255,0.18)"/>
+            <rect x="354" y="105" width="30" height="95" fill="rgba(255,255,255,0.13)"/>
+          </svg>
+        </div>
+      </aside>
+
+      <!-- Right panel: hourly chart + detail cards -->
+      <div class="panel-right">
+        <div class="hourly-card">
+          <div class="hourly-head">
+            <h2>Upcoming hours</h2>
+            <span id="hourly-range" class="hourly-range"></span>
+          </div>
+          <div class="hourly-scroll">
+            <svg id="hourly-chart" viewBox="0 0 900 220" preserveAspectRatio="none"></svg>
+          </div>
+        </div>
+
+        <h3 class="details-title">More details of today's weather</h3>
+        <div class="details-grid">
+
+          <div class="detail-card">
+            <div class="detail-head">
+              <span>Humidity</span>
+              <span class="detail-icon icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s7 8.5 7 13a7 7 0 1 1-14 0c0-4.5 7-13 7-13Z"/></svg>
+              </span>
+            </div>
+            <p class="detail-value"><span id="humidity">--</span>%<span id="humidity-tag" class="tag"></span></p>
+            <div class="scale-bar" id="humidity-bar"><span></span></div>
+          </div>
+
+          <div class="detail-card">
+            <div class="detail-head">
+              <span>Wind</span>
+              <span class="detail-icon icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.7 7.7a2.5 2.5 0 1 0-2.5-2.5M2 12h13.5a2.5 2.5 0 1 1-2.5 2.5M2 18h9.5a2.5 2.5 0 1 0-2.5-2.5"/></svg>
+              </span>
+            </div>
+            <p class="detail-value"><span id="wind">--</span> km/h</p>
+            <p class="detail-sub" id="wind-dir">--</p>
+          </div>
+
+          <div class="detail-card">
+            <div class="detail-head">
+              <span>Precipitation</span>
+              <span class="detail-icon icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 19v2M8 13v2M16 19v2M16 13v2M12 21v2M12 15v2M17.5 12H9a7 7 0 1 1 6.71-9h.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+              </span>
+            </div>
+            <p class="detail-value"><span id="precipitation">--</span> cm</p>
+            <div class="scale-bar" id="precip-bar"><span></span></div>
+          </div>
+
+          <div class="detail-card">
+            <div class="detail-head">
+              <span>UV index</span>
+              <span class="detail-icon icon-amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+              </span>
+            </div>
+            <p class="detail-value"><span id="uv-value">--</span><span id="uv-tag" class="tag"></span></p>
+            <div class="scale-bar segmented" id="uv-bar">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="detail-card">
+            <div class="detail-head">
+              <span>Feels like</span>
+              <span class="detail-icon icon-coral">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4v10.5a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></svg>
+              </span>
+            </div>
+            <p class="detail-value"><span id="feels-like">--</span>&deg;</p>
+            <div class="scale-bar" id="feels-bar"><span></span></div>
+          </div>
+
+          <div class="detail-card">
+            <div class="detail-head">
+              <span>Chance of rain</span>
+              <span class="detail-icon icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 12H9a7 7 0 1 1 6.71-9h.79a4.5 4.5 0 1 1 0 9Z"/><path d="M12 16v4M9 18l3 3 3-3"/></svg>
+              </span>
+            </div>
+            <p class="detail-value"><span id="rain-chance">--</span>%</p>
+            <div class="scale-bar" id="rain-bar"><span></span></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
