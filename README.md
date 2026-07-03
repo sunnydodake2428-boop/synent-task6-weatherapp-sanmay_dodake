@@ -11,8 +11,8 @@ A simple weather app that fetches and displays live weather data using the Fetch
 - **Open-Meteo** — weather forecast + geocoding
 - **OpenStreetMap Nominatim** — backup geocoding for smaller villages that Open-Meteo's index misses
 
-## How to run
-No build step needed. Just open `index.html` in any browser.
+## Live Link - https://sunnydodake2428-boop.github.io/synent-task6-weatherapp-sanmay_dodake/
+
 
 ## Notes
 - Nominatim has a fair-use limit of 1 request/second — fine for personal/demo use, not meant for high production traffic.
