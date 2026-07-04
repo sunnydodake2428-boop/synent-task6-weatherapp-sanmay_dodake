@@ -501,7 +501,7 @@ body {
 
 @media (max-width: 640px) {
   .details-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 }
 
