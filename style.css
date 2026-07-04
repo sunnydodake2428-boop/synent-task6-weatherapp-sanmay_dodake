@@ -115,17 +115,57 @@ body {
   justify-content: center;
   box-shadow: 0 8px 18px -8px rgba(74, 134, 224, 0.6);
 }
+.quick-cities {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.quick-label {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.chip {
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.55);
+  color: #2c4a75;
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 5px 13px;
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.chip:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+}
 
 .brand-icon svg {
   width: 16px;
   height: 16px;
 }
+.brand-trust {
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  letter-spacing: 0.2px;
+}
 
 .brand-name {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-  color: #16233d;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  background: linear-gradient(135deg, #2f6fd6, #6fa8f0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .brand-tagline {

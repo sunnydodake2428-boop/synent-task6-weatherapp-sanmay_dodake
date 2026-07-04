@@ -275,6 +275,17 @@ function selectPlace(place) {
   fetchWeather(place);
 }
 
+document.querySelectorAll(".chip").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    selectPlace({
+      name: chip.dataset.name,
+      region: "",
+      latitude: parseFloat(chip.dataset.lat),
+      longitude: parseFloat(chip.dataset.lon),
+    });
+  });
+});
+
 // ---------- Geolocation button ----------
 locationBtn.addEventListener("click", () => {
   if (!navigator.geolocation) {
