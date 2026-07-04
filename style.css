@@ -314,6 +314,7 @@ body {
   box-shadow: var(--shadow-card);
   border: 1px solid rgba(255, 255, 255, 0.6);
   overflow: hidden;
+  max-width: 100%;
 }
 
 @media (max-width: 760px) {
@@ -446,6 +447,7 @@ body {
 .panel-right {
   padding: 32px;
   background: var(--white);
+  min-width: 0;
 }
 
 .hourly-card {
